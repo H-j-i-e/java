@@ -1,2 +1,91 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+
+/*
+任务：根据输入获取的位运算符和运算数完成相应运算。
+键盘第一次输入的值为四种位运算符的一种，类型为字符型；
+第二次输入的是变量 a 的值，类型为 int 型；
+判断第一次输入的为何种位运算符，计算变量 a 使用该运算符与常量 10 的值，
+如果该位运算符为 ~，则将变量 a 的值进行取反，将最后结果不换行输出，
+如果不属于任何一种，输出：该字符无效。
+*/
+package com.company;
+
+import java.util.Scanner;
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner input =new Scanner(System.in);
+        char op =input.next().charAt(0);
+        int  a=input.nextInt();
+        if(op=='&') {
+            System.out.println(10&a);
+        }else if(op=='|'){
+            System.out.println(10|a);
+        }else if(op=='^'){
+            System.out.println(10^a);
+        }else if(op=='~'){
+            System.out.println(~a);
+        }else{
+            System.out.println("该字符无效");
+        }
+    }
+}
+////
+/*
+任务：
+
+    将 -20 到 -11 中的整数经过 << 运算符向左移动 2 位（包括 -20 和 -11）；
+
+    将 -10 到 9 中的整数经过 >>> 运算符向右移动 1 位（包括 -10 和 9）；
+
+    将 10 到 20 中的整数经过 >> 运算符向右移动 3 位（包括 10 和 20）；
+
+    将上述结果依次输出（顺序为从 -20 到 10）。
+
+ */
+package com.company;
+import java.util.Scanner;
+public class second {
+    public static void main(String[] args){
+        Scanner input =new Scanner(System.in);
+        for(int i=-20;i<=20;i++){
+            if(i>=-20&&i<=-11){
+                System.out.println("将"+i+"经过<<运算符向左移动2位后的结果为"+(i<<2));
+            }else if(i>=-10&&i<=9){
+                System.out.println("将"+i+"经过>>>运算符向右移动1位后的结果为"+(i>>>1));
+            }else if(i>=10&&i<=20){
+                System.out.println("将"+i+"经过>>运算符向右移动3位后的结果为"+(i>>3));
+            }
+        }
+    }
+}
+////
+/*
+    任务
+    使用位运算符判断 x 的奇偶性，如果 x 为 1，是奇数，换行输出：1 为奇数；
+    对于变量 y，使用位运算符求取它的相反数，将结果换行输出；
+    使用位运算符求取变量 x 和 y 的平均值，将结果不换行输出。
+
+ */
+
+package com.company;
+import java.util.Scanner;
+public class Tird {
+    public static void main(String[] args){
+        Scanner input =new Scanner(System.in);
+        int x=input.nextInt();
+        int y=input.nextInt();
+        int sum1;
+        sum1=1&x+1;
+        if(sum1%2==1){
+            System.out.println(x+" 为奇数");
+        }
+        else{
+            System.out.println(x+" 为偶数");
+        }
+        int sum2;
+        sum2=~y;
+        System.out.println(sum2);
+        int sum3=(x|y)-((x^y)>>1);
+        System.out.println(sum3);
+    }
+}
