@@ -1,0 +1,63 @@
+package com.company;
+import java.util.*;
+import java.time.*;
+class person{
+    public static void main(String[] args) {
+        Scanner input =new Scanner(System.in);
+        //1.clock的使用  用于获取指定时区的当前日期、时间
+        Clock clock =Clock.systemUTC();
+        System.out.println("获取UTC时区转换的当前时间："+clock.instant());
+        System.out.println("获取UTC时区转换的毫秒数："+clock.millis());
+        //2.Duration的使用  ofXxx()  方法 获取指定时间的小时、分钟、毫秒数
+        Duration dur1 =Duration.ofDays(2);
+        System.out.println("两天等于"+dur1.toHours()+"小时");
+        System.out.println("两天等于"+dur1.toMinutes()+"分钟");
+        System.out.println("两天等于"+dur1.toMillis()+"毫秒");
+
+        Duration dur2 =Duration.ofHours(2);
+        System.out.println("两小时等于"+dur2.toMinutes()+"分钟");
+        System.out.println("两小时等于"+dur2.toMillis()+"毫秒");
+        //以此类推...
+        // Duration dur3=Duration.ofMinutes();
+        //Duration dur3 =Duration.ofSeconds(2);
+
+        //3.Instant的使用  now()--获取当前时刻 plusXxx()--在当前的时间基础上加上一段时间  minusXxx()--在当前时间基础上减去一段时间
+        Instant instant =Instant.now();
+        System.out.println("获取UTC时区的当前时间："+instant);
+        System.out.println("当前时间加一小时后的时间为："+instant.plusSeconds(3600));
+        System.out.println("当前时间减一小时后的时间为："+instant.minusSeconds(3600));
+        //其它以此类推
+
+        //4.LocalDate的使用 now() plusXxx() minusXxx()  //类同上
+        LocalDate l =LocalDate.now();  //获取日期
+        System.out.println("从默认时区的系统时钟获得当前日期："+l);
+        LocalDate l1=l.plusYears(1).plusDays(1);
+        System.out.println("当前的日期加上1年一天之后："+l1);
+
+        //5.LocalTime的使用 now() plusXxx() minusXxx()
+        LocalTime l2 =LocalTime.now(); //获取时间
+        LocalTime l3=l2.plusHours(1).plusSeconds(30);
+        System.out.println("当前的时间加上1小时30分之后："+l3);
+
+        //6.LocalDateTime的使用 now() plusXxx() minusXxx()
+        LocalDateTime LT =LocalDateTime.now();
+        LocalDateTime LT1= LT.plusYears(1).plusMonths(1).plusDays(1).plusHours(1).plusMinutes(30);
+        System.out.println("当前时间加上1年1月1小时30分之后："+LT1);
+
+        //7.Year\YearMonth\MonthDay的使用
+        Year year=Year.now();
+        System.out.println("当前年份为："+year);
+        YearMonth yearmonth =YearMonth.now();
+        System.out.println("当前年月为："+yearmonth);
+        MonthDay monthday =MonthDay.now();
+        System.out.println("当前月日为："+monthday);
+
+        //8.获取系统的默认时区
+        ZoneId zoneId =ZoneId.systemDefault();
+        System.out.println("当前系统默认时区为："+zoneId);
+
+
+
+    }
+}
+
