@@ -1,0 +1,112 @@
+IO流只能按照数据的先后顺序读取设备中的内容或者向设备里写入数据，但是，要想可以在文件中的任意位置开始执行读写操作要怎么做呢？所以，RandomAccessFile类应运而生了！它可以随机的从文件的任何位置开始执行读写功能。
+下面我们来看RandomAccessFile类的两个构造方法：
+
+1、RandomAccessFile(File file,String mode) //使用file文件，并指定访问模式mode
+2、RandomAccessFile(String url,String mode)//通过url路径访问文件，并指定访问模式mode
+
+模式有四种：r 、rw 、rws 、rwd
+
+1、r //表示以只读的方式打开文件。
+2、rw //表示以读写的方式打开文件（当文件不存在时，会自动创建该文件）
+3、rws //表示以读写的方式打开文件，每当进行写操作，同步地刷新到磁盘，刷新内容和元数据 
+4、rwd //表示以读写的方式打开文件，每当进行写操作，同步的刷新到磁盘，刷新内容
+（元数据：描述数据的数据，对数据及信息资源的描述信息。）
+
+RandomAccessFile的常用方法：
+
+1、long getFilePointer() //返回当前读写指针所处的位置
+2、void seek(long pos) //设定读写指针的位置，与文件开头像个pos个字节数
+3、int skipBytes(int n) //设定指针从当前位置跳过 n 个字节
+4、void write(byte[] b) //将字节数组b写入此文件，并从当前文件指针开始
+5、void setLength(long newLength) //设置此文件的长度
+6、final String readLine() //从此文件当前指针读取下一行内容
+7、long length() //返回文件的长度，long类型。它不受光标影响，只会反映客观的文本长度
+8、
+int read() //从文件中读取一个字节
+int read(byte[] b) //从文件中读取b.length个字节的数据并保存到数组b中
+int read(byte[] b,int off,int len) //从文件中读取len个字节的数据并保存到数组b的指定位置中
+int readInt() //从文件中读取一个int值
+long readLong() //从文件中读取一个long值
+short readShort() //从文件中读取一个short值
+9、
+void write(int b) //向文件中写入一个int值
+void write(byte[] b) //向文件中写入一个字节数组
+void write(byte[] b,int off,int len) //向文件中写入数组b中从off位置开始长度为len的字节数据
+void writeInt(int v) //向文件中写入一个int值
+void writeLong(long v) //向文件中写入一个long值
+void writeShort(int v) //向文件中写入一个短型int值
+
+练习一：
+
+要求：
+接收给定的一行字符串（如：/test/a.txt，hello。逗号前为文件路径，逗号后为追加内容）；
+使用 RandomAccessFile 实现向给定文件中追加给定内容；
+打印追加内容后的指针位置。
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class FileTest {
+
+    public static void main(String[] args) throws IOException {
+       Scanner input=new Scanner(System.in);
+        // 接收给定的字符串
+        String str=input.next().toString();
+        // 切割字符串
+        String[] arrs=str.split("，");
+        // 通过文件对象创建RandomAccessFile对象
+        RandomAccessFile ran=new RandomAccessFile(arrs[0],"rw");
+        // 移动指针位置
+        long len=ran.length();
+        ran.seek(len);
+        // 追加给定内容
+        ran.write(arrs[1].getBytes());
+        // 打印追加内容后的文件指针位置
+        System.out.print(ran.getFilePointer());
+   
+    }
+}
+
+
+要求：
+接收给定的一行字符串（如：/test/a.txt，23，hello。第一部分为给定文件路径，第二部分为插入位置，第三部分为插入内容）；
+向文件中指定位置添加给定内容。
+
+思路点拨：我们可以把插入点之后的内容先读取到临时文件，再把给定内容和临时文件中的内容依次追加到插入点之后。
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class FileTest {
+
+    public static void main(String[] args) throws IOException {       
+        Scanner scanner = new Scanner(System.in);    // 接收给定字符串
+        String str = scanner.nextLine();
+        // 切割字符串
+        String[] arrs=str.split("，");
+        // 创建一个临时文件
+        File tmp=File.createTempFile("tmp",null);
+        try(
+        RandomAccessFile ran=new RandomAccessFile(new File(arrs[0]),"rw");
+        FileInputStream ins=new FileInputStream(tmp);
+        FileOutputStream ous=new FileOutputStream(tmp);)
+        {
+            long len=Long.parseLong(arrs[1]);
+            ran.seek(len);//把指针记录到给定的插入位置
+            byte[] bbuf=new byte[1024];
+            int hasRead=0;//用于实际读取的字节数据
+            while((hasRead=ran.read(bbuf))!=-1){
+                ous.write(bbuf,0,hasRead); //将读取的内容写入临时文件
+            }
+        // 将给定的内容和临时文件中的内容依次追加到原文件的插入点后
+        ran.seek(len);//将指针重新定位到给定位置
+        ran.write(arrs[2].getBytes());//追加需要插入的内容
+        while((hasRead=ins.read(bbuf))!=-1){
+            ran.write(bbuf,0,hasRead); //追加临时文件中的内容
+        }
+        tmp.deleteOnExit();//程序退出时删除临时文件
+        }
+    }
+}
