@@ -1,0 +1,35 @@
+/*
+
+    接收给定的字符串（如:abcde）；
+    使用 LinkedList 实现字符串反转输出。
+
+*/
+import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.Iterator;
+public class CollTest {
+
+    public static void main(String[] args) {
+    
+        Scanner input=new Scanner(System.in);
+        // 接收给定的字符串
+        String str=input.nextLine();
+        char[] a=str.toCharArray();
+        // 创建集合
+        LinkedList<Character> linklist=new LinkedList<>();
+        // 利用 LinkedList 特有方法将字符串中每个字符反转添加进集合
+        for(char c:a){
+            linklist.add(c);
+        }
+        for(int i=0;i<a.length;i++){
+            char x=linklist.pollLast();
+            linklist.add(i,x);
+        }
+        // 将集合中的元素拼接成一个字符串输出
+        Iterator<Character> it=linklist.iterator();
+        while(it.hasNext()){
+            System.out.print(it.next());
+        }
+    }	
+}
+
