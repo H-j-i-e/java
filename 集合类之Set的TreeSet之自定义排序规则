@@ -1,0 +1,45 @@
+要求：接收给定的一行字符串（该字符串属于电话簿，包含多个电话号码，如：13545453432，13678909808）；
+    自定义 TreeSet 的排序规则（按电话号码降序）；
+    去除电话簿中重复的电话号码并降序输出各电话号码。
+
+// 第一步：导入相关类
+import java.util.*;
+// 第二步：自定义类实现Comparator，自定义排序规则
+class Telephone implements Comparator<String>{
+// 第三步：重写compare方法
+    
+    public int compare(String s1,String s2){
+        if(s1.compareTo(s2)>0)
+            return -1;
+        else if(s1.compareTo(s2)<0)
+            return 1;
+        else
+            return 0;
+    }
+}     
+// 第四步：创建CollTest类
+class CollTest{
+// 第五步：接收给定的字符串
+    public static void main(String[] args){
+        Scanner input=new Scanner(System.in);
+        String str=input.nextLine();
+// 第六步：切割电话簿
+        String[] arrs=str.split(",");
+// 第七步：创建存储字符串的TreeSet集合
+        TreeSet<String> T=new TreeSet<>();
+// 第八步：创建Comparator对象
+        Comparator<String> comp=new Telephone();
+// 第九步：把Comparator对象与TreeSet对象关联
+        T =new TreeSet<String>(comp);
+// 第十步：往集合中添加元素
+        for(String s:arrs){
+            T.add(s);
+        }
+        
+// 第十一步：降序输出去重的电话号码
+        Iterator<String> it=T.iterator();
+        while(it.hasNext()){
+            System.out.println(it.next());
+        }
+    }
+}
