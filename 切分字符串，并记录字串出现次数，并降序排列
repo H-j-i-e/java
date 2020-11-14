@@ -1,0 +1,45 @@
+package com.company;
+import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.*;
+public class Main {
+     public Map<String,Integer> task(String str) {
+        Map<String,Integer> map=new HashMap<String, Integer>();
+        StringTokenizer t=new StringTokenizer(str," ,.'':\"\"?");
+        int count;
+        String word;
+        while(t.hasMoreTokens()){
+            word=t.nextToken();
+            if(map.containsKey(word)){
+                count=map.get(word);
+                map.put(word,++count);
+            }
+            else{
+                map.put(word,1);
+            }
+        }
+        List<Map.Entry<String,Integer>> list=new ArrayList<Map.Entry<String,Integer>>(map.entrySet());
+        Collections.sort(list,new Comparator<Map.Entry<String,Integer>>(){
+            public int compare(Map.Entry<String,Integer>o1,
+                               Map.Entry<String,Integer> o2){
+                return o2.getValue()-o1.getValue();
+            }
+        });
+        return map;
+    }
+    public static void main(String[] args) {
+        Scanner input =new Scanner(System.in);
+        String str=input.nextLine();
+        Map<String,Integer> map=new HashMap<String,Integer>();
+        Main T=new Main();
+         map=T.task(str);
+        System.out.println(map);
+
+    }
+}
