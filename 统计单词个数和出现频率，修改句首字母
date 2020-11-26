@@ -19,41 +19,61 @@ import java.io.*;
 public class MyThread{
     public static void count_words(File f) throws IOException {
         BufferedReader re=new BufferedReader(new FileReader(f));
-        File f2=new File("C:\\Users\\IdeaProjects\\test\\Trump revised.txt");
+        File f2=new File("C:\\Users\\黄婕\\IdeaProjects\\test\\Trump revised.txt");
         BufferedWriter bw=new BufferedWriter(new FileWriter(f2));
         String str=null;
         String content=null;
         while((str=re.readLine())!=null){
-                content+=str;
+                content=content+str+"\r";
 
         }
+        content=content.substring(4);
         String[] cents=content.split("\\.");
+
         int chang_co=0;
         for(int i=0;i<cents.length;i++){
-            int flag=0;
+
+            int flag=0,flag1=0;
             char ch=cents[i].charAt(0);
             if(ch=='\"'&&cents[i].length()>1){
                 cents[i]=cents[i].substring(1);
                 flag++;
+                ch=cents[i].charAt(0);
+            }
+            else
+            if(ch==' '&&cents[i].length()>1){
+                cents[i]=cents[i].substring(1);
+                ch=cents[i].charAt(0);
+            }
+            if(flag!=0){
+                cents[i-1]=cents[i-1]+"\"";
+            }
+            if(ch== '\r' &&cents[i].length()>1){
+
+                cents[i-1]=cents[i-1]+".\r";
+                cents[i]=cents[i].substring(2);
+                ch=cents[i].charAt(0);
+
             }
             if(ch>='a'&&ch<='z'){
                 char ch2=Character.toUpperCase(ch);
                 cents[i].replace(ch,ch2);
                 chang_co++;
+
+
             }
-            if(flag!=0){
-                cents[i]="\""+cents[i];
-            }
+
 
         }
         System.out.println("修改首字母次数："+chang_co);
 
         for(int j=0;j<cents.length;j++){
-            if(cents[j].length()>1)
-            cents[j]+=".";
             bw.write(cents[j]);
-            bw.newLine();
-            bw.newLine();
+            if(cents[j].endsWith("\r")){
+                bw.newLine();
+            }
+
+
         }
 
         bw.flush();
@@ -66,14 +86,21 @@ public class MyThread{
 
         BufferedReader re=new BufferedReader(new FileReader(f));
         String content=null;
-        String str=null;
+        String str;
         while((str=re.readLine())!=null){
             content+=str;
+
         }
-        content.replace(","," ");
-        content.replace("\""," ");
-        content.replace("."," ");
-        String[] words=content.split(" ");
+
+        content=content.substring(4);
+
+        String[] words=content.split("[^a-zA-Z]");
+
+
+        for(int i=0;i<words.length;i++){
+            words[i]=words[i].toLowerCase();
+
+        }
 
         for(int i=0;i<words.length;i++){
             if(map.containsKey(words[i])){
@@ -85,6 +112,7 @@ public class MyThread{
                 map.put(words[i],1);
 
         }
+
         List<Map.Entry<String,Integer>> list =new ArrayList<Map.Entry<String,Integer>>(map.entrySet());
         Collections.sort(list,new Comparator<Map.Entry<String,Integer>>(){
             public int compare(Map.Entry<String,Integer> o1, Map.Entry<String,Integer>o2){
@@ -92,7 +120,7 @@ public class MyThread{
             }
         });
 
-        for(int i=0;i<10;i++) {
+        for(int i=1;i<11;i++) {
             Map.Entry<String, Integer> key=list.get(i);
             System.out.println(key);
         }
