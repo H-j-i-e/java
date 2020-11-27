@@ -1,0 +1,100 @@
+package com.company;
+
+import com.mysql.cj.protocol.Resultset;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class Main<ex> {
+    public static void main(String[] args)throws ClassNotFoundException, SQLException {
+        Connection conn=null;
+        Statement stat=null;
+        String url="jdbc:mysql://localhost:3306/jdbc";
+        String username="root";
+        String password="root";
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn=DriverManager.getConnection(url,username,password);
+        stat=conn.createStatement();
+        try{
+            System.out.println("欢迎进入学生管理系统！");
+            System.out.println("如果想要查看全部学生信息，请按1");
+            System.out.println("如果想要添加新学生信息，请按2");
+            System.out.println("如果想要修改学生信息，请按3");
+            System.out.println("如果想要删除学生信息，请按4");
+            Scanner sc=new Scanner(System.in);
+            int x=sc.nextInt();
+            switch (x){
+                case 1:Select(stat);break;  
+                case 2:Add(stat);break;
+                case 3:Alter(stat,sc);break;
+                case 4:Delete(stat,sc);break;
+                default:
+                    System.out.println("抱歉，您输入的信息不符合要求！");
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void Select(Statement stat)throws SQLException{
+        String sql="select * from stu_infos";
+        ResultSet re=stat.executeQuery(sql);
+        System.out.println("|  学号  |  姓名  |  班级  |  排名  |");
+        while(re.next()){
+            int id=re.getInt("id");
+            String name=re.getString("name");
+            String c_no=re.getString("c_no");
+            int rank=re.getInt("ranking");
+            System.out.println("|  "+id+"  |  "+name+"  |  "+c_no+"  |  "+rank+"  |");
+        }
+    }
+    public static void Add(Statement stat)throws SQLException{
+        System.out.println("请输入需要添加的学生信息（学号，姓名，班级，总成绩排名）：");
+        Scanner input =new Scanner(System.in);
+        String str=input.nextLine();
+        String[] arrs=str.split(" ");
+        int id=Integer.parseInt(arrs[0]);
+        String name=arrs[1];
+        String c_no=arrs[2];
+        int rank=Integer.parseInt(arrs[3]);
+        boolean ex=Exist(stat,id);
+        if(!ex){
+            String sql="insert into stu_infos values( "+id+",'"+name+"','"+c_no+"',"+rank+");";
+            stat.execute(sql);
+            System.out.println("添加成功！");
+        }
+
+
+    }
+    public static void Alter(Statement stat,Scanner sc)throws SQLException{
+        System.out.println("请输入需要修改信息的学生学号：");
+        int target=sc.nextInt();
+        System.out.println("请输入需要新的信息（班级和排名）");
+        Scanner in=new Scanner(System.in);
+        String[] new_info=in.nextLine().split(" ");
+        if(Exist(stat,target)){
+            String sql="update stu_infos set c_no='"+new_info[0]+"' where stu_infos.id="+target;
+            String sql2="update stu_infos set ranking="+Integer.parseInt(new_info[1])+" where stu_infos.id="+target;
+            stat.execute(sql);
+            stat.execute(sql2);
+        }
+    }
+    public static void Delete(Statement stat,Scanner sc)throws SQLException{
+        System.out.println("请输入要删除的学生学号：");
+        int target=sc.nextInt();
+        if(Exist(stat,target)){
+            String sql="delete from stu_infos where id="+target;
+            stat.execute(sql);
+            System.out.println("删除成功！");
+        }
+    }
+    public static boolean Exist(Statement stat,int id) throws SQLException{
+        ResultSet re =stat.executeQuery("select id from stu_infos");
+        while(re.next()) {
+            if (id == re.getInt("id")) {
+                return true;
+            }
+        } return false;
+    }
+
+}
