@@ -1,0 +1,81 @@
+package com.company;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+/*
+编写程序捕捉鼠标的按下左键的消息，
+在单及或者双击鼠标左键时，在窗口中心位置，
+分别显示文字“鼠标左键被单击”或者“鼠标左键被双击”，并且显示当前鼠标所在的位置坐标。
+ */
+class MyMouseListener extends MouseAdapter {
+    private static boolean flag = false;// 用来判断是否已经完成一个事件
+    private static int clickNum = 0;// 用来判断是否该执行双击事件
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        MyMouseListener.flag = false;
+        if (MyMouseListener.clickNum == 1) {// 1时执行双击事件（在0.2s间隔内再次点击了鼠标，则认为是双击）
+            int x=e.getX();
+            int y=e.getY();
+            System.out.println("执行双击事件，此处坐标为（"+x+","+y+")");
+            MyMouseListener.clickNum = 0;
+            MyMouseListener.flag = true;
+            return;
+        }
+        // 定义定时器
+        Timer timer = new Timer();
+        // 定时器开始执行，延时0.2秒后确定是否执行单击事件
+        timer.schedule(new TimerTask() {
+            private int n = 0;// 记录定时器执行次数
+            @Override
+            public void run() {
+                if (MyMouseListener.flag) {
+                    MyMouseListener.clickNum = 0;
+                    this.cancel(); //若是单击一次后，在0.2s内又单击了一次，此次应该被当作是双击，程序会先运行上面的双击事件，那么就需要移除掉后面的单击判断
+                    return;
+                }
+                if (n == 1) {
+                    int x=e.getX();
+                    int y=e.getY();
+                    System.out.println("执行单击事件，此处坐标为（"+x+","+y+")");
+                    MyMouseListener.flag = true;
+                    MyMouseListener.clickNum = 0;
+                    n = 0;
+                    return;
+                }
+                clickNum++;
+                n++;
+
+            }
+
+        }, new Date(), 200);//从当前时间开始，每隔200ms执行一次run里面的任务
+
+        //单击第一次会运行一次run方法clickNum 会加1，然后0.2秒后再执行Run方法
+        // 如果在这0.2秒中间用户又单击了事件，那就会运行开头的双击事件
+    }
+
+}
+public class Main {
+
+    private static void Main() {
+        int clicknumber = 0;
+        JFrame f = new JFrame();
+        f.setLayout(new BorderLayout());
+        f.setSize(300, 200);
+        f.setLocation(300, 200);
+        f.setVisible(true);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel label = new JLabel("此处显示鼠标左键单击的坐标", JLabel.LEFT);
+        MyMouseListener m1=new MyMouseListener();
+        f.addMouseListener(m1);
+        f.add(label, BorderLayout.PAGE_START);
+
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(Main::Main);
+    }
+}
